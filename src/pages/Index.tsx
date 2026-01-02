@@ -40,7 +40,7 @@ export type Client = {
   registeredAt: Date;
 };
 
-const ADMIN_CARD = '66373737272729175627';
+const ADMIN_CARD = '6637373727272917';
 
 const mockCards: Card[] = [
   {

@@ -7,6 +7,9 @@ import Icon from '@/components/ui/icon';
 import { type Card as CardType, type Transaction } from '@/pages/Index';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import SupportChat from '@/components/SupportChat';
+import PaymentModal from '@/components/PaymentModal';
+import ApplyProductModal from '@/components/ApplyProductModal';
 
 type DashboardProps = {
   cards: CardType[];
@@ -16,6 +19,9 @@ type DashboardProps = {
 
 const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
   const [selectedCard, setSelectedCard] = useState(cards[0]?.id || '');
+  const [showSupport, setShowSupport] = useState(false);
+  const [paymentType, setPaymentType] = useState<'card' | 'phone' | 'requisites' | 'utilities' | 'mobile' | 'internet' | null>(null);
+  const [productType, setProductType] = useState<'debit' | 'credit' | 'savings' | 'loan' | null>(null);
 
   const formatCardNumber = (number: string) => {
     return `**** **** **** ${number.slice(-4)}`;
@@ -172,27 +178,27 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <Button variant="outline" className="h-24 flex-col gap-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => setPaymentType('card')}>
                     <Icon name="User" size={24} />
                     По номеру карты
                   </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => setPaymentType('phone')}>
                     <Icon name="Smartphone" size={24} />
                     По номеру телефона
                   </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => setPaymentType('requisites')}>
                     <Icon name="Building" size={24} />
                     По реквизитам
                   </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => setPaymentType('utilities')}>
                     <Icon name="Zap" size={24} />
                     Коммунальные услуги
                   </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => setPaymentType('mobile')}>
                     <Icon name="Phone" size={24} />
                     Мобильная связь
                   </Button>
-                  <Button variant="outline" className="h-24 flex-col gap-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2" onClick={() => setPaymentType('internet')}>
                     <Icon name="Tv" size={24} />
                     Интернет и ТВ
                   </Button>
@@ -215,7 +221,7 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
                       <CardDescription>Кешбэк до 30% на всё</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full">
+                      <Button className="w-full" onClick={() => setProductType('debit')}>
                         <Icon name="Plus" className="mr-2" size={18} />
                         Оформить
                       </Button>
@@ -227,7 +233,7 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
                       <CardDescription>До 200 дней без процентов</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full">
+                      <Button className="w-full" onClick={() => setProductType('credit')}>
                         <Icon name="Plus" className="mr-2" size={18} />
                         Оформить
                       </Button>
@@ -239,7 +245,7 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
                       <CardDescription>До 18% годовых</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full">
+                      <Button className="w-full" onClick={() => setProductType('savings')}>
                         <Icon name="Plus" className="mr-2" size={18} />
                         Открыть
                       </Button>
@@ -251,7 +257,7 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
                       <CardDescription>Ставка от 5.9%</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Button className="w-full">
+                      <Button className="w-full" onClick={() => setProductType('loan')}>
                         <Icon name="Plus" className="mr-2" size={18} />
                         Оформить
                       </Button>
@@ -282,7 +288,7 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
                     <Icon name="MessageCircle" size={24} className="text-primary mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">Онлайн-чат</h3>
-                      <Button className="mt-2">Начать чат</Button>
+                      <Button className="mt-2" onClick={() => setShowSupport(true)}>Начать чат</Button>
                     </div>
                   </div>
                 </div>
@@ -311,6 +317,10 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {showSupport && <SupportChat onClose={() => setShowSupport(false)} />}
+      {paymentType && <PaymentModal type={paymentType} cards={cards} onClose={() => setPaymentType(null)} />}
+      {productType && <ApplyProductModal type={productType} onClose={() => setProductType(null)} />}
     </div>
   );
 };
