@@ -52,9 +52,9 @@ const Dashboard = ({ cards, transactions, onLogout }: DashboardProps) => {
       <header className="bg-[hsl(var(--primary))] text-white shadow-lg">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Icon name="Landmark" size={32} />
+            <span className="text-4xl">🐱</span>
             <div>
-              <h1 className="text-2xl font-bold">ВТБ Онлайн</h1>
+              <h1 className="text-2xl font-bold">Барсик Банк</h1>
               <p className="text-blue-100 text-sm">Добро пожаловать!</p>
             </div>
           </div>

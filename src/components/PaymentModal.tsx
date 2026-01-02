@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import TransactionReceipt from '@/components/TransactionReceipt';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,6 +31,8 @@ const PaymentModal = ({ type, cards, onClose }: PaymentModalProps) => {
   const [amount, setAmount] = useState('');
   const [recipient, setRecipient] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [lastTransaction, setLastTransaction] = useState<any>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,11 +50,22 @@ const PaymentModal = ({ type, cards, onClose }: PaymentModalProps) => {
     setIsProcessing(true);
 
     setTimeout(() => {
+      const transaction = {
+        id: `TRX${Date.now().toString().slice(-8)}`,
+        date: new Date(),
+        amount: parseFloat(amount),
+        recipient: recipient,
+        senderCard: cards.find(c => c.id === selectedCard)?.number || '',
+        status: 'success' as const
+      };
+      
+      setLastTransaction(transaction);
+      setIsProcessing(false);
+      setShowReceipt(true);
+      
       toast.success('Платёж выполнен успешно', {
         description: `Списано ${amount} ₽`
       });
-      setIsProcessing(false);
-      onClose();
     }, 1500);
   };
 
@@ -194,6 +208,16 @@ const PaymentModal = ({ type, cards, onClose }: PaymentModalProps) => {
           </form>
         </CardContent>
       </Card>
+
+      {showReceipt && lastTransaction && (
+        <TransactionReceipt 
+          transaction={lastTransaction} 
+          onClose={() => {
+            setShowReceipt(false);
+            onClose();
+          }} 
+        />
+      )}
     </div>
   );
 };

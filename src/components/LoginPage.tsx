@@ -43,9 +43,9 @@ const LoginPage = ({ onLogin }: LoginPageProps) => {
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl mb-4 shadow-lg">
-            <Icon name="Landmark" size={40} className="text-[hsl(var(--primary))]" />
+            <span className="text-5xl">🐱</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">ВТБ Онлайн</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Барсик Банк</h1>
           <p className="text-blue-100">Интернет-банк для физических лиц</p>
         </div>
 

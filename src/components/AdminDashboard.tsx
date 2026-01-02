@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import CallClientModal from '@/components/CallClientModal';
+import ClientManagementModal from '@/components/ClientManagementModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -30,6 +32,8 @@ const AdminDashboard = ({
 }: AdminDashboardProps) => {
   const [actionCard, setActionCard] = useState<CardType | null>(null);
   const [actionType, setActionType] = useState<'block' | 'reissue' | null>(null);
+  const [callClient, setCallClient] = useState<Client | null>(null);
+  const [manageClient, setManageClient] = useState<Client | null>(null);
 
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('ru-RU', {
@@ -78,10 +82,10 @@ const AdminDashboard = ({
       <header className="bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-lg">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Icon name="ShieldCheck" size={32} />
+            <span className="text-4xl">🐱</span>
             <div>
-              <h1 className="text-2xl font-bold">ВТБ Администрирование</h1>
-              <p className="text-gray-300 text-sm">Панель управления</p>
+              <h1 className="text-2xl font-bold">Барсик Банк — Сотрудники</h1>
+              <p className="text-gray-300 text-sm">Панель управления и контроля</p>
             </div>
           </div>
           <Button variant="ghost" className="text-white hover:bg-white/20" onClick={onLogout}>
@@ -136,10 +140,10 @@ const AdminDashboard = ({
         </div>
 
         <Tabs defaultValue="attempts" className="space-y-6">
-          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 h-12">
+          <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-5 h-12">
             <TabsTrigger value="attempts" className="flex items-center gap-2">
               <Icon name="FileText" size={18} />
-              <span className="hidden sm:inline">Попытки входа</span>
+              <span className="hidden sm:inline">Логи</span>
             </TabsTrigger>
             <TabsTrigger value="cards" className="flex items-center gap-2">
               <Icon name="CreditCard" size={18} />
@@ -148,6 +152,14 @@ const AdminDashboard = ({
             <TabsTrigger value="clients" className="flex items-center gap-2">
               <Icon name="Users" size={18} />
               <span className="hidden sm:inline">Клиенты</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <Icon name="BarChart3" size={18} />
+              <span className="hidden sm:inline">Аналитика</span>
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <Icon name="FileSpreadsheet" size={18} />
+              <span className="hidden sm:inline">Отчёты</span>
             </TabsTrigger>
           </TabsList>
 
@@ -318,12 +330,175 @@ const AdminDashboard = ({
                               </div>
                             </div>
                           </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setCallClient(client)}
+                            >
+                              <Icon name="Phone" className="mr-2" size={16} />
+                              Позвонить
+                            </Button>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => setManageClient(client)}
+                            >
+                              <Icon name="Settings" className="mr-2" size={16} />
+                              Управление
+                            </Button>
+                          </div>
                         </div>
                         {index < clients.length - 1 && <Separator className="my-4" />}
                       </div>
                     ))}
                   </div>
                 </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Статистика операций</CardTitle>
+                  <CardDescription>Последние 30 дней</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Icon name="TrendingUp" size={20} className="text-green-600" />
+                      <span className="font-medium">Успешные операции</span>
+                    </div>
+                    <span className="text-2xl font-bold text-green-600">1,234</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Icon name="TrendingDown" size={20} className="text-red-600" />
+                      <span className="font-medium">Отклонённые операции</span>
+                    </div>
+                    <span className="text-2xl font-bold text-red-600">23</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Icon name="DollarSign" size={20} className="text-blue-600" />
+                      <span className="font-medium">Общий оборот</span>
+                    </div>
+                    <span className="text-2xl font-bold text-blue-600">12.5M ₽</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Активность клиентов</CardTitle>
+                  <CardDescription>Сегодня</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center p-3 border rounded-lg">
+                    <span className="font-medium">Онлайн сейчас</span>
+                    <span className="text-2xl font-bold text-green-600">47</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border rounded-lg">
+                    <span className="font-medium">Новых клиентов</span>
+                    <span className="text-2xl font-bold">12</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 border rounded-lg">
+                    <span className="font-medium">Заявок на продукты</span>
+                    <span className="text-2xl font-bold">8</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Топ операций</CardTitle>
+                  <CardDescription>По количеству за месяц</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span>Переводы по номеру карты</span>
+                      <Badge>456</Badge>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-center">
+                      <span>Оплата ЖКХ</span>
+                      <Badge>234</Badge>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-center">
+                      <span>Пополнение мобильного</span>
+                      <Badge>189</Badge>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between items-center">
+                      <span>Переводы по СБП</span>
+                      <Badge>167</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Блокировки и мошенничество</CardTitle>
+                  <CardDescription>За последнюю неделю</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Icon name="AlertTriangle" size={20} className="text-orange-600" />
+                      <span className="font-medium">Подозрительные операции</span>
+                    </div>
+                    <span className="text-2xl font-bold text-orange-600">15</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Icon name="Ban" size={20} className="text-red-600" />
+                      <span className="font-medium">Заблокированные карты</span>
+                    </div>
+                    <span className="text-2xl font-bold text-red-600">7</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="reports">
+            <Card>
+              <CardHeader>
+                <CardTitle>Отчёты и выгрузки</CardTitle>
+                <CardDescription>Создание отчётов по операциям и клиентам</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Icon name="FileText" size={32} />
+                    <span>Отчёт по операциям</span>
+                  </Button>
+                  <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Icon name="Users" size={32} />
+                    <span>Отчёт по клиентам</span>
+                  </Button>
+                  <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Icon name="CreditCard" size={32} />
+                    <span>Отчёт по картам</span>
+                  </Button>
+                  <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Icon name="AlertTriangle" size={32} />
+                    <span>Отчёт по мошенничеству</span>
+                  </Button>
+                  <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Icon name="TrendingUp" size={32} />
+                    <span>Финансовый отчёт</span>
+                  </Button>
+                  <Button variant="outline" className="h-24 flex-col gap-2">
+                    <Icon name="Download" size={32} />
+                    <span>Выгрузка всех данных</span>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -359,6 +534,20 @@ const AdminDashboard = ({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {callClient && (
+        <CallClientModal
+          client={callClient}
+          onClose={() => setCallClient(null)}
+        />
+      )}
+
+      {manageClient && (
+        <ClientManagementModal
+          client={manageClient}
+          onClose={() => setManageClient(null)}
+        />
+      )}
     </div>
   );
 };
